@@ -1,0 +1,10 @@
+
+@Configuration
+@ComponentScan(basePackages = {"org.jsp.springjpaonetomany"})
+public class UserConfig {
+	@Bean
+	public EntityManager getEntityManager() {
+		return Persistence.createEntityManagerFactory("development").createEntityManager();
+	}
+
+}
