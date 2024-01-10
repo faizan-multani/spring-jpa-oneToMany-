@@ -1,0 +1,260 @@
+package org.jsp.springjpaonetomany.controller;
+
+import java.util.List;
+import java.util.Scanner;
+
+import org.jsp.springjpaonetomany.UserConfig;
+import org.jsp.springjpaonetomany.dao.MerchantProductDao;
+import org.jsp.springjpaonetomany.dto.Merchant;
+import org.jsp.springjpaonetomany.dto.Product;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+public class MerchantProductController {
+	static Scanner sc=new Scanner(System.in);
+	static MerchantProductDao dao;
+
+	static {
+	ApplicationContext context=new AnnotationConfigApplicationContext(UserConfig.class);
+	dao=context.getBean(MerchantProductDao.class);
+   }
+
+	public static void main(String[] args) {
+		System.out.println("1.Save merchant");
+		System.out.println("2.Update merchant");
+		System.out.println("3.Find merchant By Id");
+		System.out.println("4.Verify merchant By Phone and password");
+		System.out.println("5.Verify merchant By Email and password");
+		System.out.println("6.save product");
+		System.out.println("7.Fetch All products");
+		System.out.println("8.update product");
+		System.out.println("9.find product by merchant id");
+		System.out.println("10.find product by catagory");
+		System.out.println("11.find product by brand");
+		System.out.println("==========================");
+		System.out.println("Select your choice =>>>>>>");
+	
+		switch(sc.nextInt()) {
+		case 1:{
+			savemerchant();
+			break;
+		}
+		case 2:{
+			updatemerchant();
+				break;
+			}
+			case 3:{ findmerchantbyid();
+			break;
+		}
+		case 4:{
+			verifybyphone();
+			break;
+		}
+		case  5:{
+			verifybyemail();
+			break;
+	    }
+		case 6:{
+			saveproduct();
+			break;
+		}
+		case 7:{
+			printAllProducts();
+			break;
+		}
+		case 8:{
+			updateproduct();
+			break;
+		}
+		case 9:{
+			findproductbymerchantid();
+			break;
+		}
+		case 10:{
+			findproductbycatagory();
+			break;
+		}
+		case 11:{
+			findproductbybrand();
+			break;
+		}
+		default: {
+			System.err.println("Invalid Choice");
+}
+	 }
+}
+	public static void savemerchant() {
+		 System.out.println("Enter the name,phone, email and password to save merchant");
+			Merchant m = new Merchant();
+			m.setName(sc.next());
+			m.setPhone(sc.nextLong());
+			m.setEmail(sc.next());
+			m.setPassword(sc.next());
+			m = dao.saveMerchant(m);
+			System.out.println("merchant saved with Id:" + m.getId());
+		}
+	 
+	 public static void updatemerchant() {
+			System.out.println("Enter the merchant Id to update");
+			int id = sc.nextInt();
+			System.out.println("Enter the name,phone ,email and password to save merchant");
+			Merchant m = new Merchant();
+			m.setId(id);
+			m.setName(sc.next());
+			m.setPhone(sc.nextLong());
+			m.setEmail(sc.next());
+			m.setPassword(sc.next());
+			m = dao.updateMerchant(m);
+			if (m != null)
+				System.out.println("merchant updated");
+			else
+				System.err.println("cannot update merchant as the entered id is Invalid");
+		}
+	 
+	 public static void findmerchantbyid() {
+			System.out.println("Enter the Merchant id to print details");
+			int id = sc.nextInt();
+			Merchant m = dao.findbyid(id);
+			if (m != null) {
+				System.out.println("merchant Id:" + m.getId());
+				System.out.println("merchant Name:" + m.getName());
+				System.out.println("Phone Number:" + m.getPhone());
+				System.out.println("Email Id:" + m.getEmail());
+			} else {
+				System.err.println("You have entered an Invalid Id");
+			}
+		}
+	 
+	 public static void verifybyphone() {
+			System.out.println("Enter the Phone Number and password to verify merchant");
+			long phone = sc.nextLong();
+			String password = sc.next();
+			Merchant m = dao.verifyuser(phone, password);
+			if (m != null) {
+				System.out.println("merchant Verified Succesfully");
+				System.out.println("merchant Id:" + m.getId());
+				System.out.println("merhcant Name:" + m.getId());
+				System.out.println("Phone Number:" + m.getPhone());
+				System.out.println("Email Id:" + m.getEmail());
+			} else {
+				System.err.println("Invalid Phone Number or Password");
+			}
+		}
+	 
+	 public static void verifybyemail() {
+			System.out.println("Enter the email and password to verify merchant");
+			String email = sc.next();
+			String password = sc.next();
+			Merchant m = dao.verifyuser(email, password);
+			if (m != null) {
+				System.out.println("merchant Verified Succesfully");
+				System.out.println("merchant Id:" + m.getId());
+				System.out.println("merhcant Name:" + m.getId());
+				System.out.println("Phone Number:" + m.getPhone());
+				System.out.println("Email Id:" + m.getEmail());
+			} else {
+				System.err.println("Invalid email or Password");
+			}
+		}
+	 
+	 public static void saveproduct() {
+			System.out.println("enter the merchant id");
+			int merchant_id=sc.nextInt();
+			Product p=new Product ();
+			System.out.println("enter the product name,brand,catagory,cost,discription");
+				p.setName(sc.next());
+				p.setBrand(sc.next());
+				p.setCatagory(sc.next());
+				p.setCost(sc.nextInt());
+				p.setDescription(sc.next());
+				p=dao.saveProduct(p, merchant_id);
+				System.out.println("product saved with merchant id :"+merchant_id);
+			}
+	 
+	 public static void updateproduct() {
+			System.out.println("enter the merchant id");
+			int merchant_id_=sc.nextInt();
+			Product p=new Product();
+			System.out.println("enter the product name,brnad,catagory,cost ,discription");
+			p.setId(merchant_id_);
+			p.setName(sc.next());
+			p.setBrand(sc.next());
+			p.setCatagory(sc.next());
+			p.setCost(sc.nextInt());
+			p.setDescription(sc.next());
+			p=dao.updateProduct(p, merchant_id_);
+			if(p!=null) {
+				System.out.println("product updated");
+			}
+			else {
+				System.out.println("invalid merchant id");
+			}
+		}
+	 
+	 public static void findproductbymerchantid() {
+			System.out.println("enter the merchant id");
+			int merchant_id=sc.nextInt();
+			List<Product> p=dao.findproductbymerchantid(merchant_id);
+		if(p.size()>0) {
+				for(Product p1:p) {
+					System.out.println("Product id :"+p1.getId());
+					System.out.println("product name :"+p1.getName());
+					System.out.println("product brand :"+p1.getBrand());
+					System.out.println("product catagory :"+p1.getCatagory());
+					System.out.println("product cost :"+p1.getCost());
+					System.out.println("product discription :"+p1.getDescription());
+
+				}
+			}
+			else {
+				System.out.println("in-valid merchant id");
+			}
+		}
+	 
+	 public static void findproductbycatagory () {
+			System.out.println("enter the catagory");
+			String catagory=sc.next();
+			List<Product>p=dao.findproductbycatagory(catagory);
+		if(p.size()>0) {
+				for(Product p1:p) {
+					System.out.println("hospital id :"+p1.getId());
+					System.out.println("hospital name :"+p1.getName());
+					System.out.println("hospital founder :"+p1.getBrand());
+					System.out.println("hospital city :"+p1.getCatagory());
+					System.out.println("hospital gst no. :"+p1.getCost());
+					System.out.println("hospital yoe :"+p1.getDescription());
+
+				}
+			}
+			else {
+				System.out.println("in-valid merchant id");
+			}
+		}
+	 
+	 public static void findproductbybrand () {
+			System.out.println("enter the brand");
+			String brand=sc.next();
+			List<Product>p=dao.findproductbybrand(brand);
+		if(p.size()>0) {
+				for(Product p1:p) {
+					System.out.println("hospital id :"+p1.getId());
+					System.out.println("hospital name :"+p1.getName());
+					System.out.println("hospital founder :"+p1.getBrand());
+					System.out.println("hospital city :"+p1.getCatagory());
+					System.out.println("hospital gst no. :"+p1.getCost());
+					System.out.println("hospital yoe :"+p1.getDescription());
+
+				}
+			}
+			else {
+				System.out.println("in-valid merchant id");
+			}
+		}
+	 public static void printAllProducts() {
+			List<String> names = dao.getProducts();
+			for (String details : names) {
+				System.out.println("---------------->");
+				System.out.println(details);
+			}
+		} 
+}
